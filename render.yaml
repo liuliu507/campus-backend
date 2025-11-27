@@ -2,6 +2,7 @@ services:
   - type: web
     name: ucampus-backend
     env: docker
+    plan: free
     dockerfilePath: ./Dockerfile
     envVars:
       - key: SPRING_PROFILES_ACTIVE

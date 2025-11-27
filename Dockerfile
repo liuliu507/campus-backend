@@ -1,24 +1,29 @@
-# 使用正确的 OpenJDK 21 镜像
-FROM openjdk:21-jdk
-
+# -------- Build Stage --------
+FROM eclipse-temurin:21-jdk AS build
 WORKDIR /app
 
-# 复制构建文件
+# 复制所有所需工程文件
 COPY build.gradle settings.gradle gradlew ./
 COPY gradle ./gradle
 
-# 赋予执行权限
-RUN chmod +x ./gradlew
+# 给 gradlew 执行权限
+RUN chmod +x gradlew
 
-# 下载依赖（使用更快的镜像）
-RUN ./gradlew dependencies --no-daemon --refresh-dependencies
+# 下载依赖
+RUN ./gradlew dependencies --no-daemon || true
 
 # 复制源码
 COPY src ./src
 
-# 构建应用
+# 构建 jar
 RUN ./gradlew build -x test --no-daemon
 
-# 运行应用
+# -------- Run Stage --------
+FROM eclipse-temurin:21-jre
+WORKDIR /app
+
+# 从 build stage 复制 jar 文件
+COPY --from=build /app/build/libs/*.jar app.jar
+
 EXPOSE 8081
-CMD ["java", "-jar", "build/libs/*.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
