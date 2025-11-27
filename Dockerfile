@@ -4,13 +4,14 @@ FROM eclipse-temurin:21-jdk
 WORKDIR /app
 
 # 复制 Gradle Wrapper
-COPY gradlew build.gradle settings.gradle ./
+COPY gradlew ./
 COPY gradle ./gradle
+COPY build.gradle settings.gradle ./
 
 RUN chmod +x gradlew
 
 # 先下载依赖（加快构建速度）
-RUN ./gradlew dependencies --no-daemon || true
+RUN ./gradlew dependencies --no-daemon
 
 # 复制源码
 COPY src ./src
@@ -21,5 +22,5 @@ RUN ./gradlew clean build -x test --no-daemon
 # 暴露端口
 EXPOSE 8081
 
-# 运行应用
-CMD ["java", "-jar", "build/libs/ucampus-backend-0.0.1-SNAPSHOT.jar"]
+# 运行应用 - 使用 8081 端口
+CMD ["java", "-jar", "-Dserver.port=8081", "build/libs/ucampus-backend-0.0.1-SNAPSHOT.jar"]

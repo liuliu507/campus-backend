@@ -9,3 +9,11 @@ services:
         value: production
       - key: SERVER_PORT
         value: "8081"
+      - key: DATABASE_URL
+        value: "postgresql://ucampus_zy03_user:M5HWVb2qKiDXSzxjaqFulwYlQBScWSGV@dpg-d4k6jnc9c44c73eoodc0-a.oregon-postgres.render.com/ucampus_zy03"
+      - key: SPRING_DATASOURCE_URL
+        value: "jdbc:postgresql://dpg-d4k6jnc9c44c73eoodc0-a.oregon-postgres.render.com:5432/ucampus_zy03"
+      - key: SPRING_DATASOURCE_USERNAME
+        value: "ucampus_zy03_user"
+      - key: SPRING_DATASOURCE_PASSWORD
+        value: "M5HWVb2qKiDXSzxjaqFulwYlQBScWSGV"
