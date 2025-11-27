@@ -124,12 +124,35 @@ public class SecondhandController {
         System.out.println("🔄 删除商品 ID=" + id);
 
         try {
-            secondhandService.deleteProduct(id, "user_test");
+            // 测试阶段使用固定卖家ID，后续需要从登录信息中获取
+            String currentSellerId = "user_test";
+            System.out.println("🔍 当前卖家ID: " + currentSellerId);
+
+            secondhandService.deleteProduct(id, currentSellerId);
+
+            System.out.println("✅ 删除成功");
             return ResponseEntity.ok(success("删除成功"));
         } catch (Exception e) {
-            System.err.println("❌ 删除失败");
+            System.err.println("❌ 删除失败: " + e.getMessage());
             e.printStackTrace();
             return ResponseEntity.badRequest().body(error("删除失败：" + e.getMessage()));
+        }
+    }
+
+    // ==================== 检查商品是否存在 ====================
+    @GetMapping("/{id}/exists")
+    public ResponseEntity<?> checkProductExists(@PathVariable Long id) {
+        System.out.println("🔍 检查商品是否存在 ID=" + id);
+
+        try {
+            // 通过服务层来检查商品是否存在，而不是直接使用repository
+            // 这里我们直接调用getProductById，如果商品不存在会抛出异常
+            SecondhandProductDTO product = secondhandService.getProductById(id);
+            System.out.println("🔍 商品存在: " + (product != null));
+            return ResponseEntity.ok(Map.of("exists", product != null));
+        } catch (Exception e) {
+            System.out.println("🔍 商品不存在: " + e.getMessage());
+            return ResponseEntity.ok(Map.of("exists", false));
         }
     }
 

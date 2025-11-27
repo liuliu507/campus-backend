@@ -36,4 +36,12 @@ public class ShareService {
     public List<Share> getSharesByUser(Long userId) {
         return shareRepository.findAllByUserId(userId);
     }
+
+    // 删除趣事
+    public void deleteShare(Long id) {
+        if (!shareRepository.existsById(id)) {
+            throw new RuntimeException("Share not found: " + id);
+        }
+        shareRepository.deleteById(id);
+    }
 }

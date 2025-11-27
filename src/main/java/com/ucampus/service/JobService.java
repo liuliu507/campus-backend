@@ -133,16 +133,28 @@ public class JobService {
         return convertToDTO(updatedJob);
     }
 
-    // 删除职位
-    public void deleteJob(Long id, String publisherId) {
-        Job job = jobRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("职位不存在"));
+    // 删除职位 - 新增的删除功能
+    public void deleteJob(Long id) {
+        if (!jobRepository.existsById(id)) {
+            throw new RuntimeException("职位不存在");
+        }
+        jobRepository.deleteById(id);
+    }
 
-        if (!job.getPublisherId().equals(publisherId)) {
-            throw new RuntimeException("无权删除此职位");
+    // 获取用户发布的职位
+    public List<JobDTO> getJobsByPublisher(String publisherId) {
+        List<Job> jobs = jobRepository.findByPublisherIdOrderByCreatedAtDesc(publisherId);
+
+        if (jobs.isEmpty()) {
+            // 如果没有数据，返回该用户的模拟数据
+            return getMockJobs().stream()
+                    .filter(job -> job.getPublisherId().equals(publisherId))
+                    .collect(Collectors.toList());
         }
 
-        jobRepository.delete(job);
+        return jobs.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
     // 实体转DTO
@@ -195,19 +207,20 @@ public class JobService {
 
         // 添加模拟职位数据
         jobs.add(createMockJob(1L, "校园推广专员", "负责校园产品推广", "某科技公司", "兼职",
-                "市场推广", "2000-3000元/月", "主校区", true));
+                "市场推广", "2000-3000元/月", "主校区", true, "publisher1", "张经理"));
 
         jobs.add(createMockJob(2L, "软件开发实习生", "参与公司产品开发", "某软件公司", "实习",
-                "技术开发", "3000-5000元/月", "全市", false));
+                "技术开发", "3000-5000元/月", "全市", false, "publisher2", "李总监"));
 
         jobs.add(createMockJob(3L, "家教老师", "辅导初中数学", "个人", "兼职",
-                "教育辅导", "100元/小时", "东校区", false));
+                "教育辅导", "100元/小时", "东校区", false, "publisher3", "王老师"));
 
         return jobs;
     }
 
     private JobDTO createMockJob(Long id, String title, String description, String company,
-                                 String jobType, String category, String salary, String location, Boolean urgent) {
+                                 String jobType, String category, String salary, String location,
+                                 Boolean urgent, String publisherId, String publisherName) {
         JobDTO job = new JobDTO();
         job.setId(id);
         job.setTitle(title);
@@ -223,8 +236,8 @@ public class JobService {
         job.setRequirements("有相关经验者优先");
         job.setBenefits("提供培训，表现优秀者可转正");
         job.setWorkHours("周一至周五，弹性工作");
-        job.setPublisherId("publisher" + id);
-        job.setPublisherName("发布者" + id);
+        job.setPublisherId(publisherId);
+        job.setPublisherName(publisherName);
         job.setUrgent(urgent);
         job.setStatus("OPEN");
         job.setViewCount((int)(Math.random() * 100) + 20);

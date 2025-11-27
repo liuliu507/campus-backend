@@ -22,4 +22,7 @@ public interface ErrandRepository extends JpaRepository<Errand, Long> {
     List<Errand> searchByKeyword(@Param("keyword") String keyword);
 
     List<Errand> findByPublisherIdOrderByCreatedAtDesc(Long publisherId);
+
+    // 检查任务是否存在
+    boolean existsById(Long id);
 }

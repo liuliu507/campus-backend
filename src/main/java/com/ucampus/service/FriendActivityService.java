@@ -90,6 +90,20 @@ public class FriendActivityService {
         activityRepository.save(activity);
     }
 
+    // 新增的删除活动方法
+    @Transactional
+    public void deleteActivity(Long activityId) {
+        FriendActivity activity = activityRepository.findById(activityId)
+                .orElseThrow(() -> new RuntimeException("活动不存在"));
+
+        // 先删除相关的报名记录
+        List<FriendJoin> joins = joinRepository.findByActivityId(activityId);
+        joinRepository.deleteAll(joins);
+
+        // 再删除活动
+        activityRepository.delete(activity);
+    }
+
     public List<FriendJoin> listJoinsForActivity(Long activityId) {
         return joinRepository.findByActivityId(activityId);
     }

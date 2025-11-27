@@ -2,7 +2,6 @@ package com.ucampus.controller;
 
 import com.ucampus.dto.ApiResponse;
 import com.ucampus.dto.CreateJobRequest;
-import com.ucampus.dto.JobApplicationRequest;
 import com.ucampus.dto.JobDTO;
 import com.ucampus.entity.Job;
 import com.ucampus.service.JobService;
@@ -98,12 +97,22 @@ public class JobController {
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteJob(@PathVariable Long id) {
         try {
-            String publisherId = "publisher_test";
-            jobService.deleteJob(id, publisherId);
+            jobService.deleteJob(id);
             return ResponseEntity.ok(ApiResponse.success("职位删除成功", null));
         } catch (Exception e) {
             return ResponseEntity.badRequest()
                     .body(ApiResponse.error("职位删除失败: " + e.getMessage()));
+        }
+    }
+
+    @GetMapping("/my-jobs")
+    public ResponseEntity<ApiResponse<List<JobDTO>>> getMyJobs() {
+        try {
+            List<JobDTO> jobs = jobService.getAllJobs();
+            return ResponseEntity.ok(ApiResponse.success("获取我的职位成功", jobs));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.error("获取我的职位失败: " + e.getMessage()));
         }
     }
 

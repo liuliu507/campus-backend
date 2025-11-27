@@ -3,6 +3,7 @@ package com.ucampus.controller;
 import com.ucampus.dto.ShareDto;
 import com.ucampus.entity.Share;
 import com.ucampus.service.ShareService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,5 +35,18 @@ public class ShareController {
     @GetMapping("/user/{userId}")
     public List<Share> getUserShares(@PathVariable Long userId) {
         return shareService.getSharesByUser(userId);
+    }
+
+    // 删除趣事
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteShare(@PathVariable Long id) {
+        try {
+            shareService.deleteShare(id);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 }

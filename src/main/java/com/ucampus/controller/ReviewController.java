@@ -64,6 +64,22 @@ public class ReviewController {
         return ResponseEntity.ok(updated);
     }
 
+    // 删除评价接口
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteReview(@PathVariable Long id) {
+        reviewService.deleteReview(id);
+        return ResponseEntity.ok().build();
+    }
+
+    // 根据发布者ID删除评价接口
+    @DeleteMapping("/publisher/{publisherId}/{reviewId}")
+    public ResponseEntity<?> deleteReviewByPublisher(
+            @PathVariable Long publisherId,
+            @PathVariable Long reviewId) {
+        reviewService.deleteReviewByPublisher(reviewId, publisherId);
+        return ResponseEntity.ok().build();
+    }
+
     // 在 ReviewController 中添加以下方法：
 
     @PostMapping("/red-black")

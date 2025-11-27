@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/friends")
-@CrossOrigin
+@CrossOrigin(origins = "http://localhost:3000", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS})
 public class FriendActivityController {
 
     private final FriendActivityService service;
@@ -47,6 +47,13 @@ public class FriendActivityController {
                            @RequestParam(required = false) String participantName,
                            @RequestParam(required = false) String participantContact) {
         return service.joinActivity(id, participantName, participantContact);
+    }
+
+    // 删除活动 - 新增的删除接口
+    @DeleteMapping("/{id}")
+    public String delete(@PathVariable Long id) {
+        service.deleteActivity(id);
+        return "活动删除成功";
     }
 
     // 退出（传 joinId）

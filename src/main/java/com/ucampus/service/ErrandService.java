@@ -84,8 +84,25 @@ public class ErrandService {
         return convertToDTO(updated);
     }
 
+    // ==================== 删除跑腿任务 ====================
+    public void deleteErrand(Long id) {
+        try {
+            Errand errand = errandRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("跑腿任务不存在 ID: " + id));
 
+            // 测试阶段跳过权限验证
+            System.out.println("🗑️ 删除跑腿任务 ID: " + id);
+            System.out.println("⚠️ 测试阶段跳过权限验证");
 
+            errandRepository.delete(errand);
+            System.out.println("✅ 跑腿任务删除成功");
+
+        } catch (Exception e) {
+            System.err.println("❌ 删除跑腿任务异常: " + e.getMessage());
+            e.printStackTrace(); // 添加详细堆栈跟踪
+            throw new RuntimeException("删除跑腿任务失败: " + e.getMessage());
+        }
+    }
 
     private ErrandDTO convertToDTO(Errand errand) {
         ErrandDTO dto = new ErrandDTO();

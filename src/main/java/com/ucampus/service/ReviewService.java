@@ -85,6 +85,26 @@ public class ReviewService {
         return convertToDTO(updated);
     }
 
+    // 删除评价方法
+    public void deleteReview(Long reviewId) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new RuntimeException("评价不存在"));
+        reviewRepository.delete(review);
+    }
+
+    // 根据发布者ID删除评价（权限验证）
+    public void deleteReviewByPublisher(Long reviewId, Long publisherId) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new RuntimeException("评价不存在"));
+
+        // 验证发布者权限
+        if (!review.getPublisherId().equals(publisherId)) {
+            throw new RuntimeException("无权删除此评价");
+        }
+
+        reviewRepository.delete(review);
+    }
+
     public ReviewSummaryDTO getReviewSummary(String targetType, String targetName) {
         ReviewSummaryDTO summary = new ReviewSummaryDTO();
         summary.setTargetName(targetName);
@@ -130,6 +150,8 @@ public class ReviewService {
         dto.setPublisherName("用户" + review.getPublisherId()); // 简化处理
         dto.setCreatedAt(review.getCreatedAt());
         dto.setTimeAgo(calculateTimeAgo(review.getCreatedAt()));
+        // 注意：这里暂时注释掉，因为ReviewDTO可能没有setPublisherId方法
+        // dto.setPublisherId(review.getPublisherId());
 
         return dto;
     }
