@@ -5,4 +5,4 @@ builder = "NIXPACKS"
 startCommand = "java -jar build/libs/*.jar"
 
 [[services]]
-port = 8080
+port = 8081
