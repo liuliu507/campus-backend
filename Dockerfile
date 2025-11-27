@@ -1,29 +1,25 @@
-# -------- Build Stage --------
-FROM eclipse-temurin:21-jdk AS build
+# 使用正确的 JDK 21 镜像
+FROM eclipse-temurin:21-jdk
+
 WORKDIR /app
 
-# 复制所有所需工程文件
-COPY build.gradle settings.gradle gradlew ./
+# 复制 Gradle Wrapper
+COPY gradlew build.gradle settings.gradle ./
 COPY gradle ./gradle
 
-# 给 gradlew 执行权限
 RUN chmod +x gradlew
 
-# 下载依赖
+# 先下载依赖（加快构建速度）
 RUN ./gradlew dependencies --no-daemon || true
 
 # 复制源码
 COPY src ./src
 
-# 构建 jar
-RUN ./gradlew build -x test --no-daemon
+# 构建应用
+RUN ./gradlew clean build -x test --no-daemon
 
-# -------- Run Stage --------
-FROM eclipse-temurin:21-jre
-WORKDIR /app
-
-# 从 build stage 复制 jar 文件
-COPY --from=build /app/build/libs/*.jar app.jar
-
+# 暴露端口
 EXPOSE 8081
-ENTRYPOINT ["java", "-jar", "app.jar"]
+
+# 运行应用
+CMD ["java", "-jar", "build/libs/ucampus-backend-0.0.1-SNAPSHOT.jar"]
