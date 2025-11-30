@@ -37,8 +37,9 @@ public class ClassSubstitutionService {
     }
 
     public ClassSubstitutionDTO createSubstitution(CreateSubstitutionRequest request) {
+        // 修改这里：查找用户，如果不存在则创建默认用户，但不使用传入的ID
         User publisher = userRepository.findById(request.getPublisherId())
-                .orElseGet(() -> createDefaultUser(request.getPublisherId()));
+                .orElseGet(() -> createDefaultUser());
 
         ClassSubstitution substitution = ClassSubstitution.builder()
                 .publisher(publisher)
@@ -68,8 +69,9 @@ public class ClassSubstitutionService {
         ClassSubstitution substitution = substitutionRepository.findById(substitutionId)
                 .orElseThrow(() -> new RuntimeException("代课任务不存在"));
 
+        // 修改这里：查找接单用户，如果不存在则创建默认用户
         User acceptor = userRepository.findById(acceptorId)
-                .orElseGet(() -> createDefaultUser(acceptorId));
+                .orElseGet(() -> createDefaultUser());
 
         substitution.setAcceptor(acceptor);
         substitution.setStatus("accepted");
@@ -87,12 +89,14 @@ public class ClassSubstitutionService {
         substitutionRepository.save(substitution);
     }
 
-    private User createDefaultUser(Long userId) {
+    // 修改这里：创建默认用户，让数据库自动生成ID
+    private User createDefaultUser() {
+        // 生成一个唯一的用户名
+        String uniqueId = String.valueOf(System.currentTimeMillis());
         User defaultUser = User.builder()
-                .id(userId)
-                .studentId("default_" + userId)
-                .username("用户_" + userId)
-                .email("user" + userId + "@example.com")
+                .studentId("temp_" + uniqueId)
+                .username("临时用户_" + uniqueId)
+                .email("temp" + uniqueId + "@example.com")
                 .phone("未设置")
                 .avatarUrl("")
                 .creditScore(100)
