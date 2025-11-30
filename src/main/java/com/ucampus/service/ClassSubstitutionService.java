@@ -38,7 +38,7 @@ public class ClassSubstitutionService {
 
     public ClassSubstitutionDTO createSubstitution(CreateSubstitutionRequest request) {
         User publisher = userRepository.findById(request.getPublisherId())
-                .orElseThrow(() -> new RuntimeException("用户不存在"));
+                .orElseGet(() -> createDefaultUser(request.getPublisherId()));
 
         ClassSubstitution substitution = ClassSubstitution.builder()
                 .publisher(publisher)
@@ -69,7 +69,7 @@ public class ClassSubstitutionService {
                 .orElseThrow(() -> new RuntimeException("代课任务不存在"));
 
         User acceptor = userRepository.findById(acceptorId)
-                .orElseThrow(() -> new RuntimeException("用户不存在"));
+                .orElseGet(() -> createDefaultUser(acceptorId));
 
         substitution.setAcceptor(acceptor);
         substitution.setStatus("accepted");
@@ -85,6 +85,21 @@ public class ClassSubstitutionService {
 
         substitution.setLikes(substitution.getLikes() + 1);
         substitutionRepository.save(substitution);
+    }
+
+    private User createDefaultUser(Long userId) {
+        User defaultUser = User.builder()
+                .id(userId)
+                .studentId("default_" + userId)
+                .username("用户_" + userId)
+                .email("user" + userId + "@example.com")
+                .phone("未设置")
+                .avatarUrl("")
+                .creditScore(100)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        return userRepository.save(defaultUser);
     }
 
     private ClassSubstitutionDTO convertToDTO(ClassSubstitution substitution) {
