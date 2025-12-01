@@ -12,8 +12,11 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
 @Service
+
 @RequiredArgsConstructor
+
 public class ClassSubstitutionService {
 
     private final ClassSubstitutionRepository substitutionRepository;
@@ -33,6 +36,7 @@ public class ClassSubstitutionService {
     }
 
     public ClassSubstitutionDTO createSubstitution(CreateSubstitutionRequest request) {
+        System.out.println("=== VERSION: " + "2025-12-01-no-user-check" + " ===");
 
         // 直接使用 publisherId，不做用户存在检查
         ClassSubstitution substitution = ClassSubstitution.builder()
