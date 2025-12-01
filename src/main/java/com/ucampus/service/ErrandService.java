@@ -4,9 +4,7 @@ package com.ucampus.service;
 import com.ucampus.dto.ErrandDTO;
 import com.ucampus.dto.CreateErrandRequest;
 import com.ucampus.entity.Errand;
-import com.ucampus.entity.User;
 import com.ucampus.repository.ErrandRepository;
-import com.ucampus.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +18,6 @@ import java.util.stream.Collectors;
 public class ErrandService {
 
     private final ErrandRepository errandRepository;
-    private final UserRepository userRepository;
 
     public List<ErrandDTO> getAllErrands() {
         return errandRepository.findAll()
@@ -57,9 +54,6 @@ public class ErrandService {
                     .applicants(0)
                     .createdAt(LocalDateTime.now())
                     .build();
-
-            // 重要：不设置 publisher，让数据库自动设置为 NULL
-            // errand.setPublisher(null); // 或者直接注释掉这行
 
             System.out.println("创建 Errand 实体: " + errand.toString());
 
@@ -99,7 +93,7 @@ public class ErrandService {
 
         } catch (Exception e) {
             System.err.println("❌ 删除跑腿任务异常: " + e.getMessage());
-            e.printStackTrace(); // 添加详细堆栈跟踪
+            e.printStackTrace();
             throw new RuntimeException("删除跑腿任务失败: " + e.getMessage());
         }
     }

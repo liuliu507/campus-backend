@@ -34,7 +34,7 @@ public class ClassSubstitutionService {
 
     public ClassSubstitutionDTO createSubstitution(CreateSubstitutionRequest request) {
 
-        // 不检查用户是否存在，直接使用 publisherId
+        // 直接使用 publisherId，不做用户存在检查
         ClassSubstitution substitution = ClassSubstitution.builder()
                 .publisherId(request.getPublisherId())
                 .title(request.getTitle())
@@ -62,7 +62,7 @@ public class ClassSubstitutionService {
         ClassSubstitution substitution = substitutionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("代课任务不存在"));
 
-        // 不检查是否是有效用户
+        // 直接写 acceptorId
         substitution.setAcceptorId(acceptorId);
         substitution.setStatus("accepted");
         substitution.setApplicants(substitution.getApplicants() + 1);
@@ -100,8 +100,8 @@ public class ClassSubstitutionService {
         dto.setApplicants(s.getApplicants());
         dto.setLikes(s.getLikes());
 
-        // 不关联 User 表，所以 publisherName 用 publisherId 替代
-        dto.setPublisherName("用户 " + s.getPublisherId());
+        // 没有 User 表关联，直接显示 ID
+        dto.setPublisherName("用户 " + (s.getPublisherId() == null ? "未知" : s.getPublisherId()));
 
         dto.setCreatedAt(s.getCreatedAt());
         dto.setTimeAgo(calculateTimeAgo(s.getCreatedAt()));

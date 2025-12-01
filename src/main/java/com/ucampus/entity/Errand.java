@@ -17,9 +17,8 @@ public class Errand {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "publisher_id") // 移除 nullable = false
-    private User publisher;
+    @Column(name = "publisher_id")
+    private Long publisherId;
 
     @Column(nullable = false)
     private String title;

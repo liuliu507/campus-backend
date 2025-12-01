@@ -17,11 +17,10 @@ public class ClassSubstitution {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 不再关联 User，直接使用 publisherId
+    // 直接保存 publisherId，不再关联 User
     @Column(name = "publisher_id", nullable = false)
     private Long publisherId;
 
-    // 接受者同理
     @Column(name = "acceptor_id")
     private Long acceptorId;
 
